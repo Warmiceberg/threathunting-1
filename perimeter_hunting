@@ -1,0 +1,45 @@
+# May 8, 2017
+# Hunting on the Perimeter
+
+# resource: https://cyber-ir.com/2016/03/01/cyber-threat-hunting-3-hunting-in-the-perimeter/
+
+1.denied inbound traffic: conn.log, http.log, rdp.log, ssh.log, ftp.log
+  why is this traffic being denied?
+  where is the ip from?
+  is the ip known to be malicious?
+  what ports are involved? what services run on these ports?
+  protocols?
+  does the ip go after more than one port?
+  
+conn.log:
+<- all denied connections -> 
+select * from conn where conn_state = "REJ"
+
+<- unique ips w/ count of denied connections -> 
+select distinct(id_orig_h) as SourceIP, distinct(id_orig_p) as Port, count(id_orig_h) as CountOf from conn where conn_state = "REJ" group by id_orig_h
+
+select * from conn where local_orig = true
+select * from conn where local_orig = true and resp_country_code <> "US"
+
+ssh.log:
+<- all denied connections ->
+select * from ssh where auth_success = false
+
+<- unique ips w/ count of failed ssh attemps ->
+select distinct(id_orig_h) as Source, count(id_orig_h) as CountOf from ssh where auth_success = false group by id_orig_h
+
+http.log:
+<- all status 400 connections w/ count ->
+select distinct(id_orig_h) as Host, id_resp_h as Server, count(id_orig_h) as CountOf from http where status_code like "%400%" group by id_orig_h
+
+select * from http where id_resp_p = 80
+select * from http where id_resp_p = 443
+select id_orig_h, referrer, uri, user_agent from http
+select distinct(user_agent) from http
+select distinct(host) from http
+select distinct(uri) from http
+select id_orig_h, response_body_len from http
+
+
+
+2. 
