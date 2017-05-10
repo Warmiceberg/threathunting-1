@@ -54,4 +54,3 @@ select * from rdp where cookie = "nmap"
 select distinct(cookie), count(cookie) from rdp group by cookie
 select * from rdp where cookie like "%scan%" or cookie like "%nmap%"
 
-2. 
