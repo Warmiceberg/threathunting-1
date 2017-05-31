@@ -21,6 +21,7 @@ select distinct(id_orig_h) as SourceIP, distinct(id_orig_p) as Port, count(id_or
 <- other queries of interest ->
 select * from conn where local_orig = true
 select * from conn where orig_country_code <> "US"
+select * from conn where orig_country_code = "US" and resp_country_code <> "US"
 select * from conn where local_orig = true and resp_country_code <> "US"
 select distinct(proto) from conn
 
